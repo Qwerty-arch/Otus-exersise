@@ -6,7 +6,8 @@
     <modules>
         <module>exercise-1</module>
 		<module>exercise-2</module>
-	</modules>
+        <module>exercise-3</module>
+    </modules>
     <parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
