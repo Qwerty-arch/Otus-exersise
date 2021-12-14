@@ -27,7 +27,6 @@ public class FileServiceImplTest {
     @SpyBean
     private FileServiceImpl fileService;
 
-    private static final String PATH_TO_FILE = "src/main/resources/data/questions.csv";
     private static final String FILE_NAME = "questions.csv";
     private static final int COUNT_TO_COMPLETE_TEST = 2;
     private static final int EXPECTED_SIZE_RESULT = 2;
