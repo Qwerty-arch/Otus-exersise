@@ -23,12 +23,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public List<FileCsv> parseCsvFile() {
-        try {
-            return parseCSV(dao.findFileCsvName());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return parseCSV(dao.findFileCsvName());
     }
 
     @Override
@@ -36,7 +31,7 @@ public class FileServiceImpl implements FileService {
         return dao.findCountToCompleteTest();
     }
 
-    private List<FileCsv> parseCSV(String fileName) throws IOException {
+    private List<FileCsv> parseCSV(String fileName) {
         List<FileCsv> fileCsvs = new ArrayList<>();
 
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
