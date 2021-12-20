@@ -1,54 +1,70 @@
 package com.oshovskii.otus.service;
 
-import com.oshovskii.otus.dao.FileDao;
+import com.oshovskii.otus.dao.interfaces.FileDao;
 import com.oshovskii.otus.domain.FileCsv;
 import com.oshovskii.otus.utils.Parser;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.oshovskii.otus.factory.TestFileCsvFactory.createFileCsv;
+import static com.oshovskii.otus.factory.TestFileCsvFactory.createFileCsvList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+
+@DisplayName("Test FileServiceImpl")
+@ExtendWith(SpringExtension.class)
+@Import(FileServiceImpl.class)
 public class FileServiceImplTest {
 
-    @Mock
+    @MockBean
     private FileDao fileDao;
 
-    @Mock
+    @MockBean
     private Parser parser;
 
-    @InjectMocks
+    @SpyBean
     private FileServiceImpl fileService;
 
-    private static final String PATH_TO_FILE = "src/main/resources/data/questionsRUS.csv";
-    private static final String FILE_NAME = "questionsRUS.csv";
+    private static final String FILE_NAME = "questions.csv";
+    private static final int COUNT_TO_COMPLETE_TEST = 2;
+    private static final int EXPECTED_SIZE_RESULT = 3;
 
+    @DisplayName("Parse csv file test")
     @Test
-    public void parseCsvFileTest() throws IOException {
-        List<FileCsv> fileCsvList = new ArrayList<>();
+    public void parseCsvFileTest_voidInput_shouldReturnListFileCsv() {
+        // Config
+        List<FileCsv> fileCsvList = createFileCsvList(EXPECTED_SIZE_RESULT);
 
-        final FileCsv fileCsv1 = createFileCsv(1);
-        final FileCsv fileCsv2 = createFileCsv(2);
+        when(fileDao.findFileCsvName()).thenReturn(FILE_NAME);
+        when(parser.parseCSV(FILE_NAME)).thenReturn(fileCsvList);
 
-        fileCsvList.add(fileCsv1);
-        fileCsvList.add(fileCsv2);
+        // Call
+        final List<FileCsv> result = fileService.parseCsvFile();
 
-        given(fileDao.findPathToCsvFile(FILE_NAME))
-                .willReturn(PATH_TO_FILE);
+        // Verify
+        assertThat(fileService.parseCsvFile()).isNotNull();
+        assertEquals(EXPECTED_SIZE_RESULT, result.size());
+    }
 
-        given(parser.parseCSV(fileDao.findPathToCsvFile(FILE_NAME)))
-                .willReturn(fileCsvList);
+    @DisplayName("Find number to complete test")
+    @Test
+    public void numberToCompleteTest_voidInput_shouldInt() {
+        // Config
+        when(fileDao.findCountToCompleteTest()).thenReturn(COUNT_TO_COMPLETE_TEST);
 
+        // Call
+        final int result = fileService.findCountToCompleteTest();
 
-        assertThat(fileService.parseCsvFile(FILE_NAME)).isNotNull();
+        // Verify
+        assertThat(fileService.findCountToCompleteTest()).isNotNull();
+        assertEquals(result, COUNT_TO_COMPLETE_TEST);
     }
 }
