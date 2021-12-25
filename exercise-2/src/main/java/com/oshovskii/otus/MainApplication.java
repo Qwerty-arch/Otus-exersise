@@ -22,7 +22,7 @@ public class MainApplication {
 
 	private static void testStudents(FileService service){
 		Scanner scan = new Scanner(System.in);
-		System.out.println("Input your name:");
+		System.out.println("Input your type:");
 		String inputName = scan.nextLine();
 		System.out.println("Test:");
 		printQuestions(service);

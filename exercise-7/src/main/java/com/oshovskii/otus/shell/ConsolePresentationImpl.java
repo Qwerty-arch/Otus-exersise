@@ -1,9 +1,9 @@
 package com.oshovskii.otus.shell;
 
-import com.oshovskii.otus.domain.Author;
 import com.oshovskii.otus.domain.Book;
-import com.oshovskii.otus.domain.Genre;
+import com.oshovskii.otus.service.AuthorServiceImpl;
 import com.oshovskii.otus.service.BookServiceImpl;
+import com.oshovskii.otus.service.GenreServiceImpl;
 import com.oshovskii.otus.shell.interfaces.ConsolePresentation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.shell.Availability;
@@ -16,6 +16,8 @@ import org.springframework.shell.standard.ShellOption;
 @RequiredArgsConstructor
 public class ConsolePresentationImpl implements ConsolePresentation {
     private final BookServiceImpl bookService;
+    private final AuthorServiceImpl authorService;
+    private final GenreServiceImpl genreService;
     private String userName;
 
     @Override
@@ -49,12 +51,9 @@ public class ConsolePresentationImpl implements ConsolePresentation {
     @Override
     @ShellMethod(value = "Insert book", key = {"insertBook", "insert", "ins"})
     @ShellMethodAvailability(value = "isPublishEventCommandAvailable")
-    public String insetBook(String title, String author_name, String genre_name) {
+    public String insetBook(Long authorId, Long genreId, String title) {
         Book book = new Book(title);
-        Author author = new Author(author_name);
-        Genre genre = new Genre(genre_name);
-
-        bookService.insertBook(book, author, genre);
+        bookService.insertBook(book, authorId, genreId);
         String completedCommandInsertBook = "insert book <"+ book.getTitle() + "> completed";
         return completedCommandInsertBook;
     }
@@ -66,6 +65,20 @@ public class ConsolePresentationImpl implements ConsolePresentation {
         bookService.deleteBookById(bookId);
         String completedDeleteByIdInfo = "book with id " + bookId + " deleted";
         return completedDeleteByIdInfo;
+    }
+
+    @Override
+    @ShellMethod(value = "Publish author by id", key = {"getAuthorById", "getA"})
+    @ShellMethodAvailability(value = "isPublishEventCommandAvailable")
+    public String publishAuthorByID(Long authorId) {
+        return authorService.getAuthorById(authorId).toString();
+    }
+
+    @Override
+    @ShellMethod(value = "Publish genre by id", key = {"getGenreById", "getG"})
+    @ShellMethodAvailability(value = "isPublishEventCommandAvailable")
+    public String publishGenreByID(Long genreId) {
+        return genreService.getGenreById(genreId).toString();
     }
 
     private Availability isPublishEventCommandAvailable() {

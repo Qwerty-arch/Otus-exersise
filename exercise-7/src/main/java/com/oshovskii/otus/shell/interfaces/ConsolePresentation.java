@@ -5,6 +5,9 @@ public interface ConsolePresentation {
     int publishCountBooks();
     String publishBookByID(Long bookId);
     String publishAllBook();
-    String insetBook(String title, String author_name, String genre_name);
+    String insetBook(Long authorId, Long genreId, String title);
     String deleteBookByID(Long bookId);
+
+    String publishAuthorByID(Long authorId);
+    String publishGenreByID(Long genreId);
 }

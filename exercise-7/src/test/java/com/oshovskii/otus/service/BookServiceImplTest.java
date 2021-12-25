@@ -4,6 +4,7 @@ import com.oshovskii.otus.dao.BookDaoImpl;
 import com.oshovskii.otus.domain.Author;
 import com.oshovskii.otus.domain.Book;
 import com.oshovskii.otus.domain.Genre;
+import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -19,7 +19,6 @@ import static org.mockito.Mockito.*;
 @DisplayName("BookServiceImpl Test")
 @SpringBootTest(classes = BookServiceImpl.class)
 public class BookServiceImplTest {
-
 
     @Autowired
     private BookServiceImpl bookService;
@@ -30,12 +29,19 @@ public class BookServiceImplTest {
     private static final int EXPECTED_BOOKS_COUNT = 2;
     private static final Long EXISTING_BOOK_ID = 1L;
     private static final Long EXISTING_BOOK_ID_2 = 2L;
-    private static final String EXISTING_AUTHOR_NAME_2 = "Dan Brown";
-    private static final String EXISTING_AUTHOR_NAME_1 = "Dan Brown";
     private static final String EXISTING_BOOK_TITLE = "The Da Vinci Code";
     private static final String EXISTING_BOOK_TITLE_2 = "Angels and Demons";
-    private static final String EXISTING_GENRE_NAME = "Detective";
-    private static final String EXISTING_GENRE_NAME_2 = "Detective";
+    private static final String EXPECTED_BOOK_TITLE = "Test title";
+
+    private static final Long EXISTING_AUTHOR_ID = 1L;
+    private static final Long EXISTING_AUTHOR_ID_2 = 2L;
+    private static final String EXISTING_AUTHOR_NAME = "Dan Brown";
+    private static final String EXISTING_AUTHOR_NAME_2 = "Dan Brown";
+
+    private static final Long EXISTING_GENRE_ID = 1L;
+    private static final Long EXISTING_GENRE_ID_2 = 2L;
+    private static final String EXISTING_GENRE_TYPE = "Detective";
+    private static final String EXISTING_GENRE_TYPE_2 = "Roman";
 
     @DisplayName("Return expected count books in db")
     @Test
@@ -44,7 +50,7 @@ public class BookServiceImplTest {
         when(bookDao.count()).thenReturn(EXPECTED_BOOKS_COUNT);
 
         // Call
-        final int actualBookCount = bookService.countAllBook();
+        val actualBookCount = bookService.countAllBook();
 
         // Verify
         assertEquals(actualBookCount, EXPECTED_BOOKS_COUNT);
@@ -54,34 +60,35 @@ public class BookServiceImplTest {
     @Test
     public void insert_validBook_shouldInsertBook(){
         // Config
-        Book saveBook = new Book(EXISTING_BOOK_TITLE_2);
-        Author saveAuthor = new Author(EXISTING_AUTHOR_NAME_2);
-        Genre saveGenre = new Genre(EXISTING_GENRE_NAME_2);
-        doNothing().when(bookDao).insert(saveBook, saveAuthor, saveGenre);
+        val saveBook = new Book(EXPECTED_BOOK_TITLE);
+        doNothing().when(bookDao).insert(saveBook, EXISTING_AUTHOR_ID, EXISTING_GENRE_ID);
 
         // Call
-        bookService.insertBook(saveBook, saveAuthor, saveGenre);
+        bookService.insertBook(saveBook, EXISTING_AUTHOR_ID, EXISTING_GENRE_ID);
 
         // Verify
-        verify(bookDao, times(1)).insert(saveBook, saveAuthor, saveGenre);
+        verify(bookDao, times(1)).insert(saveBook, EXISTING_AUTHOR_ID, EXISTING_GENRE_ID);
     }
 
     @DisplayName("Return expected book by id")
     @Test
     public void getBookById_validBookId_shouldReturnExpectedBookById(){
         // Config
-        Book expectedBook = new Book(EXISTING_BOOK_TITLE_2);
-        expectedBook.setId(EXISTING_BOOK_ID_2);
+        val expectedAuthor = new Author(EXISTING_AUTHOR_NAME);
+        expectedAuthor.setId(EXISTING_AUTHOR_ID);
 
-        Author author = new Author(EXISTING_GENRE_NAME_2);
-        author.setBooks(Set.of(expectedBook));
-        Genre genre = new Genre(EXISTING_GENRE_NAME_2);
-        genre.setBooks(Set.of(expectedBook));
+        val expectedGenre = new Genre(EXISTING_GENRE_TYPE_2);
+        expectedGenre.setId(EXISTING_GENRE_ID);
 
-        when(bookDao.getById(EXISTING_BOOK_ID_2)).thenReturn(expectedBook);
+        val expectedBook = new Book(EXISTING_BOOK_TITLE);
+        expectedBook.setId(EXISTING_BOOK_ID);
+        expectedBook.setAuthor(expectedAuthor);
+        expectedBook.setGenre(expectedGenre);
+
+        when(bookDao.getById(EXISTING_BOOK_ID)).thenReturn(expectedBook);
 
         // Call
-        final Book actualBook = bookService.getBookById(expectedBook.getId());
+        val actualBook = bookService.getBookById(expectedBook.getId());
 
         // Verify
         assertEquals(actualBook, expectedBook);
@@ -91,22 +98,29 @@ public class BookServiceImplTest {
     @Test
     public void getAllBook_voidInput_shouldReturnExpectedBooksList(){
         // Config
-        // create book 1
-        Book expectedBook = new Book(EXISTING_BOOK_TITLE_2);
-        expectedBook.setId(EXISTING_BOOK_ID_2);
+        // create 1 book
+        val expectedAuthor = new Author(EXISTING_AUTHOR_NAME);
+        expectedAuthor.setId(EXISTING_AUTHOR_ID);
 
-        Author author = new Author(EXISTING_GENRE_NAME_2);
-        author.setBooks(Set.of(expectedBook));
-        Genre genre = new Genre(EXISTING_GENRE_NAME_2);
-        genre.setBooks(Set.of(expectedBook));
+        val expectedGenre = new Genre(EXISTING_GENRE_TYPE);
+        expectedGenre.setId(EXISTING_GENRE_ID);
 
-        // create book 2
-        Book expectedBook2 = new Book(EXISTING_BOOK_TITLE);
+        val expectedBook = new Book(EXISTING_BOOK_TITLE);
         expectedBook.setId(EXISTING_BOOK_ID);
-        Author author2 = new Author(EXISTING_AUTHOR_NAME_1);
-        author2.setBooks(Set.of(expectedBook));
-        Genre genre2 = new Genre(EXISTING_GENRE_NAME);
-        genre2.setBooks(Set.of(expectedBook));
+        expectedBook.setAuthor(expectedAuthor);
+        expectedBook.setGenre(expectedGenre);
+
+        // create 2 book
+        val expectedAuthor2 = new Author(EXISTING_AUTHOR_NAME_2);
+        expectedAuthor2.setId(EXISTING_AUTHOR_ID_2);
+
+        val expectedGenre2 = new Genre(EXISTING_GENRE_TYPE_2);
+        expectedGenre2.setId(EXISTING_GENRE_ID_2);
+
+        val expectedBook2 = new Book(EXISTING_BOOK_TITLE_2);
+        expectedBook2.setId(EXISTING_BOOK_ID_2);
+        expectedBook2.setAuthor(expectedAuthor2);
+        expectedBook2.setGenre(expectedGenre2);
 
         List<Book> expectedBookList = List.of(expectedBook, expectedBook2);
         when(bookDao.getAll()).thenReturn(expectedBookList);

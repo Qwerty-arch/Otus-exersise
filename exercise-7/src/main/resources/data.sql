@@ -1,14 +1,14 @@
 INSERT INTO authors (`name`)
 VALUES
 ('Dan Brown'),
-('Dan Brown');
+('Dan Smith');
 
-INSERT INTO genres (`name`)
+INSERT INTO genres (`type`)
 VALUES
 ('Detective'),
 ('Roman');
 
-INSERT INTO books (`title`)
+INSERT INTO books (`author_id`,`genre_id`,`title`)
 VALUES
-('The Da Vinci Code'),
-('Angels and Demons');
+(1, 1, 'The Da Vinci Code'),
+(2, 2, 'Angels and Demons');

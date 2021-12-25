@@ -1,9 +1,7 @@
 package com.oshovskii.otus.dao;
 
 import com.oshovskii.otus.dao.interfaces.BookDao;
-import com.oshovskii.otus.domain.Author;
 import com.oshovskii.otus.domain.Book;
-import com.oshovskii.otus.domain.Genre;
 import lombok.RequiredArgsConstructor;
 import org.simpleflatmapper.jdbc.spring.JdbcTemplateMapperFactory;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -29,23 +27,23 @@ public class BookDaoImpl implements BookDao {
                     .newInstance()
                     .addKeys("id")
                     .newResultSetExtractor(Book.class);
-    private static final String SQL_INSERT_BOOK = "INSERT INTO books (title) VALUES (:title)";
-    private static final String SQL_INSERT_AUTHOR = "INSERT INTO authors (name) VALUES (:name)";
-    private static final String SQL_INSERT_GENRE = "INSERT INTO genres (name) VALUES (:name)";
-    private static final String SQL_GET_BOOK_BY_ID = "SELECT b.id as id, b.title,"
+    private static final String SQL_INSERT_BOOK = "INSERT INTO books (title, author_id, genre_id) " +
+            "                                      VALUES (:title, :authorId, :genreId)";
+    private static final String SQL_GET_BOOK_BY_ID =
+            "SELECT b.id as id, b.title,"
             + " a.id as author_id, a.name as author_name, "
-            + " g.id as genre_id, g.name as genre_name"
+            + " g.id as genre_id, g.type as genre_type"
             + " FROM books b"
-            + " LEFT OUTER JOIN authors a ON a.id = b.id"
-            + " LEFT OUTER JOIN genres g ON g.id = b.id"
+            + " LEFT OUTER JOIN authors a ON (a.id = b.author_id)"
+            + " LEFT OUTER JOIN genres g ON (g.id = b.genre_id)"
             + " WHERE b.id = :id";
     private static final String SQL_GET_ALL_BOOK =
             "SELECT b.id as id, b.title as title,"
             + " a.id as author_id, a.name as author_name, "
-            + " g.id as genre_id, g.name as genre_name"
+            + " g.id as genre_id, g.type as genre_type"
             + " FROM books b"
-            + " LEFT JOIN authors a ON (b.id = a.id)"
-            + " LEFT OUTER JOIN genres g ON (b.id = g.id)";
+            + " LEFT JOIN authors a ON (b.author_id = a.id)"
+            + " LEFT OUTER JOIN genres g ON (b.genre_id = g.id)";
     private static final String SQL_DELETE_BOOK_BY_ID = "DELETE FROM books WHERE id = :id";
 
     @Override
@@ -57,22 +55,14 @@ public class BookDaoImpl implements BookDao {
 
     @Transactional
     @Override
-    public void insert(Book book, Author author, Genre genre) {
+    public void insert(Book book, Long authorId, Long genreId) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlParameterSource bookParameters = new MapSqlParameterSource()
-                .addValue("title", book.getTitle());
+                .addValue("title", book.getTitle())
+                .addValue("authorId", authorId)
+                .addValue("genreId", genreId);
 
         namedParameterJdbcOperations.update(SQL_INSERT_BOOK, bookParameters, keyHolder);
-
-        SqlParameterSource authorParameters = new MapSqlParameterSource()
-                .addValue("name", author.getName());
-
-        namedParameterJdbcOperations.update(SQL_INSERT_AUTHOR, authorParameters, keyHolder);
-
-        SqlParameterSource genreParameters = new MapSqlParameterSource()
-                .addValue("name", genre.getName());
-
-        namedParameterJdbcOperations.update(SQL_INSERT_GENRE, genreParameters, keyHolder);
     }
 
     @Override
@@ -87,6 +77,7 @@ public class BookDaoImpl implements BookDao {
         return namedParameterJdbcOperations.query(SQL_GET_ALL_BOOK, mapper);
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
         Map<String, Object> params = Collections.singletonMap("id", id);

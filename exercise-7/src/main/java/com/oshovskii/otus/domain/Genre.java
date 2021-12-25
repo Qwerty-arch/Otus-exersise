@@ -9,10 +9,10 @@ import java.util.Set;
 @Data
 public class Genre {
     private Long id;
-    private String name;
+    private String type;
     private Set<Book> books;
 
-    public Genre(String name) {
-        this.name = name;
+    public Genre(String type) {
+        this.type = type;
     }
 }

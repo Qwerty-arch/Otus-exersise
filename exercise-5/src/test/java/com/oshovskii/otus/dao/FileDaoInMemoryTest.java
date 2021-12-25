@@ -14,7 +14,7 @@ public class FileDaoInMemoryTest {
     @Autowired
     private FileDao fileDao;
 
-    @DisplayName("Should return file CSV name test")
+    @DisplayName("Should return file CSV type test")
     @Test
     public void findFileCsvName_voidInput_shouldReturnString() {
         // Call

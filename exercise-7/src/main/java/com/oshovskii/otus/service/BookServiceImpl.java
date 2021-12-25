@@ -1,9 +1,7 @@
 package com.oshovskii.otus.service;
 
 import com.oshovskii.otus.dao.BookDaoImpl;
-import com.oshovskii.otus.domain.Author;
 import com.oshovskii.otus.domain.Book;
-import com.oshovskii.otus.domain.Genre;
 import com.oshovskii.otus.service.interfaces.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,8 +19,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void insertBook(Book book, Author author, Genre genre) {
-        bookDao.insert(book, author, genre);
+    public void insertBook(Book book, Long authorId, Long genreId) {
+        bookDao.insert(book, authorId, genreId);
     }
 
     @Override
