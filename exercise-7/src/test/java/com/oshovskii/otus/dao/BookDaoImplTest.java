@@ -140,7 +140,7 @@ public class BookDaoImplTest {
         expectedBook2.setGenre(expectedGenre2);
 
         // Call
-        final List<Book> actualBookList = bookDao.getAll();
+        val actualBookList = bookDao.getAll();
 
         // Verify
         assertThat(actualBookList)
