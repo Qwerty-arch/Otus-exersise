@@ -1,6 +1,5 @@
 package com.oshovskii.otus.service;
 
-import com.oshovskii.otus.MainApplication;
 import com.oshovskii.otus.dao.FileDao;
 import com.oshovskii.otus.domain.FileCsv;
 import com.oshovskii.otus.utils.Parser;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.io.IOException;
 import java.util.ArrayList;
