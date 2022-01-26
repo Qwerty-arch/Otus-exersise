@@ -3,31 +3,42 @@ package com.oshovskii.otus.utils;
 import com.oshovskii.otus.domain.FileCsv;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class Parser {
 
-    public List<FileCsv> parseCSV(String path) throws IOException {
+    public List<FileCsv> parseCSV(String fileName) {
         List<FileCsv> fileCsvs = new ArrayList<>();
-        List<String> fileLines = Files.readAllLines(Paths.get(path));
-        for (String fileLine : fileLines) {
-            String[] splitedText = fileLine.split(",");
-            ArrayList<String> columnList = new ArrayList<>();
-            for (int i = 0; i < splitedText.length; i++) {
-                columnList.add(splitedText[i]);
-            }
-            FileCsv fileCsv = new FileCsv(
-                    columnList.get(0),
-                    columnList.get(1),
-                    columnList.get(2));
 
-            fileCsvs.add(fileCsv);
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
+             BufferedReader bufferedReader = new BufferedReader(
+                     new InputStreamReader(Objects.requireNonNull(inputStream)))) {
+
+            String line;
+
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] splitedText = line.split(",");
+                ArrayList<String> columnList = new ArrayList<>();
+                Collections.addAll(columnList, splitedText);
+                FileCsv fileCsv = new FileCsv(
+                        columnList.get(0),
+                        columnList.get(1),
+                        columnList.get(2));
+
+                fileCsvs.add(fileCsv);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
         return fileCsvs;
     }
 }

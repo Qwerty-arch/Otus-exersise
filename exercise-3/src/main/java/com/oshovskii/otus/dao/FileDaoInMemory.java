@@ -1,38 +1,29 @@
 package com.oshovskii.otus.dao;
 
-import com.oshovskii.otus.config.ConfigApp;
+import com.oshovskii.otus.dao.interfaces.FileDao;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class FileDaoInMemory implements FileDao {
 
-    private final int count;
     private final String filePath;
-    private String filePathEn;
+    private final int numberToCompleteTest;
 
-    public FileDaoInMemory(ConfigApp configApp) {
-        this.filePath = configApp.getFilePath();
-        this.filePathEn = configApp.getFilePathEn();
-        this.count = configApp.getNumberToCompleteTest();
+    public FileDaoInMemory(@Value("${test.pathFile}") String filePath,
+                           @Value("${test.win}") int numberToCompleteTest) {
+        this.filePath = filePath;
+        this.numberToCompleteTest = numberToCompleteTest;
     }
 
     @Override
-    public String findPathToCsvFile(String fileName) {
-        if (fileName.equals("questionsRUS.csv")) {
-            return filePath;
-        } else if (fileName.equals("questionsEN.csv")) {
-            return filePathEn;
-        } else {
-            throw new IllegalArgumentException("File not found");
-        }
+    public String findFileCsvName() {
+        String[] parts = filePath.split("/");
+        return parts[parts.length - 1];
     }
 
     @Override
-    public int findCountToCompleteTest(String fileName) {
-        if (fileName.equals("questionsRUS.csv") || fileName.equals("questionsEN.csv")) {
-            return count;
-        } else {
-            throw new IllegalArgumentException("File not found");
-        }
+    public int findCountToCompleteTest() {
+        return numberToCompleteTest;
     }
 }

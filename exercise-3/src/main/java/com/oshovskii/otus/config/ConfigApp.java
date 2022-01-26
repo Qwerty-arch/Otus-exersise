@@ -1,17 +1,20 @@
 package com.oshovskii.otus.config;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
-@ConfigurationProperties(prefix = "test")
-@Component
-@Getter
-@Setter
+import java.util.Locale;
+
+@Configuration
 public class ConfigApp {
-
-    private String filePath;
-    private String filePathEn;
-    private int numberToCompleteTest;
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:i18n/messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        Locale.setDefault(Locale.US);
+        return messageSource;
+    }
 }

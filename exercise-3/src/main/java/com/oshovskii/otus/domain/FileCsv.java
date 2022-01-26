@@ -1,14 +1,13 @@
 package com.oshovskii.otus.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @ToString
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FileCsv {
-
     private final String qwestion;
     private final String rightAnswer;
     private final String incorrectAnswer;

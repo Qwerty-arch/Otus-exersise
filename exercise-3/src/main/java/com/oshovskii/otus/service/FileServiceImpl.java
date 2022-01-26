@@ -1,33 +1,29 @@
 package com.oshovskii.otus.service;
 
-import com.oshovskii.otus.dao.FileDao;
+import com.oshovskii.otus.dao.interfaces.FileDao;
 import com.oshovskii.otus.domain.FileCsv;
+import com.oshovskii.otus.service.interfaces.FileService;
 import com.oshovskii.otus.utils.Parser;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
 
     private final FileDao dao;
     private final Parser parser;
 
     @Override
-    public List<FileCsv> parseCsvFile(String filePath) {
-        try {
-            return parser.parseCSV(dao.findPathToCsvFile(filePath));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        throw new IllegalArgumentException("Incorrect filed");
+    public List<FileCsv> parseCsvFile() {
+        return parser.parseCSV(dao.findFileCsvName());
     }
 
     @Override
-    public int numberToCompleteTest(String filePath) {
-        return dao.findCountToCompleteTest(filePath);
+    public int findCountToCompleteTest() {
+        return dao.findCountToCompleteTest();
     }
+
 }
