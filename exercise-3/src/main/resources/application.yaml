@@ -1,0 +1,12 @@
+spring:
+  banner: image.location=classpath:img.png
+  output:
+    ansi:
+      enabled: ALWAYS
+test:
+  pathFile: exercise-3/src/main/resources/questionsEN.csv
+  pathFileRUS: exercise-3/src/main/resources/data/questionsRUS.csv
+  win: 2
+#test.filePath=exercise-3/src/main/resources/data/questions.csv
+#test.filePathEn=exercise-3/src/main/resources/data/questionsEN.csv
+#test.numberToCompleteTest=2
